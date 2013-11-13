@@ -11,6 +11,7 @@
     %if session.get('logged_in'):
     <div>
       <strong>Logged in as <span id="user">{{session['email']}}</span></strong>
+      <button id="signin" style="display: none">Sign In</button>
       <button id="signout">Sign Out</button>
     </div>
 
@@ -18,7 +19,6 @@
     %else:
     <div>
       <strong>Logged in as <span id="user">no one</span></strong>
-
       <button id="signin">Sign In</button>
       <button id="signout" style="display: none">Sign Out</button>
     </div>
@@ -29,13 +29,15 @@
   <h1 style="clear: both">Chat Room</h1>
   <table style="width: 100%">
    <tr>
-     <th style="width: 10%">Users</th>
+     <th style="width: 10%">Connected users</th>
      <th style="width: 90%">Chat</th>
    </tr>
    <tr>
      <td style="width: 10%; vertical-align: top; margin-right: 5px">
-       <ul>
-         <li>tarek@ziade.org</li>
+       <ul id="users">
+         %for user in users:
+         <li id="{{user}}">{{user}}</li>
+         %end
        </ul>
      </td>
      <td style="width: 90%; height: 200px; vertical-align: top">
@@ -80,12 +82,15 @@ function appendLine(text) {
         var data = jQuery.parseJSON(evt.data);
         var user = data.user;
         var message = data.message;
+
         if (message.status) {
           if (message.status == 'online') {
              appendLine('*** ' + user + ' has entered the room');
+             $("#users").append('<li id="' + user + '">' + user + '</li>');
           }
           if (message.status == 'offline') {
              appendLine('*** ' + user + ' has left the room');
+             $("#" + user).remove();
           }
         }
         else {

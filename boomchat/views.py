@@ -5,7 +5,8 @@ from bottle import get, view, app, request, redirect, route
 @view('index')
 def index():
     return {'title': 'BoomChat',
-            'session': request.environ.get('beaker.session')}
+            'session': request.environ.get('beaker.session'),
+            'users': app.chat.get_users()}
 
 
 
