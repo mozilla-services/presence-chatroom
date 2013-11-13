@@ -13,6 +13,7 @@ import tornado.websocket
 
 from boomchat.chat import Chat
 from boomchat.user import User
+from boomchat.presence import Presence
 
 
 STATIC = os.path.join(os.path.dirname(__file__), 'static')
@@ -37,6 +38,8 @@ class ChatHandler(tornado.websocket.WebSocketHandler):
         self._user = None
 
     def get_username(self):
+        if self._user is None:
+            return None
         return self._user.name
 
     def on_message(self, message):
@@ -84,6 +87,7 @@ def main(port=8080, reloader=True):
          {"path": os.path.join(STATIC, 'js')}),
     ]
 
+    app.presence = Presence('http://localhost:8282/get_presence')
     app.chat = Chat()
     app.verifier = browserid.LocalVerifier(['*'])
 

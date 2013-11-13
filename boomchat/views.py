@@ -10,7 +10,10 @@ def index():
         contacts = []
     else:
         user = User(app_session['email'])
-        contacts = user.contacts
+        def _status(contact):
+            return {'user': contact, 'status': app.presence.get_status(contact)}
+
+        contacts = [_status(contact) for contact in user.contacts]
 
     return {'title': 'BoomChat',
             'session': request.environ.get('beaker.session'),
@@ -19,13 +22,16 @@ def index():
 
 
 @route('/getContacts', method='GET')
-def get_contact():
+def get_contacts():
     app_session = request.environ.get('beaker.session')
     if not app_session.get('logged_in', False):
         abort(401, "Sorry, access denied.")
 
+    def _status(contact):
+        return {'user': contact, 'status': app.presence.get_status(contact)}
+
     user  = User(app_session['email'])
-    return {'contacts': user.contacts}
+    return {'contacts': [_status(contact) for contact in user.contacts]}
 
 
 @route('/addContact', method='GET')

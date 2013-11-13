@@ -56,7 +56,7 @@
   <h2>Your contacts</h1>
   <ul id="contacts">
     %for contact in contacts:
-     <li id="contact-{{contact}}">{{contact}}</li>
+     <li id="contact-{{contact}}">{{contact['user']}} [{{contact['status']}}]</li>
     %end
   </ul>
   <div>
@@ -80,11 +80,14 @@ function loadContacts() {
 
   $.getJSON("getContacts", function(data) {
 
-     $.each(data.contacts, function(key, user) {
+     $.each(data.contacts, function(key, contact) {
+       var user = contact.user;
+       var status = '<span id="status-' + user + '">' + contact.status + '</span>';
        var contact_id = "contact-" + user;
+       var line = '<li id="' + contact_id + '">' + user + ' ['+ status +']</li>'
 
        if (!$('#'+contact_id).length) {
-         $("#contacts").append('<li id="' + contact_id + '">' + user + '</li>');
+         $("#contacts").append(line );
        }
      });
   });
