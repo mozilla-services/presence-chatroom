@@ -82,7 +82,9 @@ function loadContacts() {
 
      $.each(data.contacts, function(key, contact) {
        var user = contact.user;
-       var status = '<span id="status-' + user + '">' + contact.status + '</span>';
+       var userid = user.replace('@', '_');
+       userid = userid.replace('.', '_');
+       var status = '<span id="status-' + userid + '">' + contact.status + '</span>';
        var contact_id = "contact-" + user;
        var line = '<li id="' + contact_id + '">' + user + ' ['+ status +']</li>'
 
@@ -122,6 +124,17 @@ function appendLine(text) {
     ws.onmessage = function(evt) {
         var data = jQuery.parseJSON(evt.data);
         var user = data.user;
+
+        if (data.presence) {
+           var user = user.replace('@', '_');
+           user = user.replace('.', '_');
+
+           var status = data.status;
+           console.log($("#status-" + user))
+           $("#status-" + user).text(status);
+        }
+        else {
+        var user = data.user;
         var message = data.message;
 
         if (message.status) {
@@ -137,6 +150,7 @@ function appendLine(text) {
         else {
           var msg = user + ': ' + message.message;
           appendLine(msg);
+        }
         }
       };
 

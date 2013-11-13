@@ -36,6 +36,16 @@ class ChatHandler(tornado.websocket.WebSocketHandler):
     def __init__(self, *args, **kw):
         tornado.websocket.WebSocketHandler.__init__(self, *args, **kw)
         self._user = None
+        app.presence.register(self._presence_update)
+
+    def _presence_update(self, data):
+        data['presence'] = True
+        user = data['user']
+
+        for client in app.chat.clients:
+            cuser = User(client.get_username())
+            if user in cuser.contacts:
+                client.write_message(dumps(data))
 
     def get_username(self):
         if self._user is None:
@@ -58,7 +68,7 @@ class ChatHandler(tornado.websocket.WebSocketHandler):
 
     def on_close(self):
         app.chat.remove_client(self)
-
+        app.presence.unregister(self._presence_update)
 
 class TornadoWebSocketServer(ServerAdapter):
     def run(self, handler): # pragma: no cover
@@ -87,7 +97,7 @@ def main(port=8080, reloader=True):
          {"path": os.path.join(STATIC, 'js')}),
     ]
 
-    app.presence = Presence('http://localhost:8282/get_presence')
+    app.presence = Presence('ws://localhost:8282/_admin')
     app.chat = Chat()
     app.verifier = browserid.LocalVerifier(['*'])
 

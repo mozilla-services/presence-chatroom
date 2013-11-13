@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 install_requires = ['bottle-tornadosocket', 'bottle', 'tornado',
-                    'PyBrowserID', 'beaker']
+                    'PyBrowserID', 'beaker', 'ws4py']
 
 
 setup(name='boomchat',
