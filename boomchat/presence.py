@@ -11,6 +11,8 @@ class PresenceClient(TornadoWebSocketClient):
     def received_message(self, msg):
         self.onreceive(json.loads(msg.data))
 
+    def _cleanup(self):
+        pass
 
 
 class Presence(object):
