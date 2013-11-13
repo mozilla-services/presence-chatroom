@@ -53,7 +53,45 @@
     </td>
    </tr>
   </table>
+  <h2>Your contacts</h1>
+  <ul id="contacts">
+    %for contact in contacts:
+     <li id="contact-{{contact}}">{{contact}}</li>
+    %end
+  </ul>
+  <div>
+      Add a contact: <input type="text" name="contact" id="contact"></input>
+      <button id="add" onclick="addContact()">Add</button>
+  </div>
+
 <script>
+
+function addContact() {
+  var contact = $('#contact').val();
+
+  $.getJSON("addContact?contact=" + contact, function(data) {
+    loadContacts();
+    $('#contact').val('');
+  });
+
+}
+
+function loadContacts() {
+
+  $.getJSON("getContacts", function(data) {
+
+     $.each(data.contacts, function(key, user) {
+       var contact_id = "contact-" + user;
+
+       if (!$('#'+contact_id).length) {
+         $("#contacts").append('<li id="' + contact_id + '">' + user + '</li>');
+       }
+     });
+  });
+
+
+}
+
       var signinLink = document.getElementById('signin');
       if (signinLink) {
           signinLink.onclick = function() { navigator.id.request(); };
@@ -127,13 +165,15 @@ navigator.id.watch({
       dataType: 'json',
       data: {assertion: assertion},
       success: function(res, status, xhr) {
-        console.log('success');
         $('#signin').hide();
         $('#signout').show();
         $('#user').text(res.email);
         currentUser = res.email;
         // connect to the chat
         ws.send(JSON.stringify({'user': currentUser, 'status': 'online'}));
+
+        // refresh the contact list
+        loadContacts();
       },
       error: function(xhr, status, err) {
         navigator.id.logout();
@@ -146,7 +186,6 @@ navigator.id.watch({
       type: 'POST',
       url: '/logout', // This is a URL on your website.
       success: function(res, status, xhr) {
-        console.log('success logout');
         // disconnect from the chat
         ws.send(JSON.stringify({'user': currentUser, 'status': 'offline'}));
         //window.location.reload();

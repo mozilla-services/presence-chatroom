@@ -10,7 +10,10 @@ from bottle import *
 from bottle.ext.tornadosocket import TornadoWebSocketServer
 import tornado.web
 import tornado.websocket
+
 from boomchat.chat import Chat
+from boomchat.user import User
+
 
 STATIC = os.path.join(os.path.dirname(__file__), 'static')
 bottle.TEMPLATE_PATH = [os.path.join(os.path.dirname(__file__),
@@ -34,11 +37,11 @@ class ChatHandler(tornado.websocket.WebSocketHandler):
         self._user = None
 
     def get_username(self):
-        return self._user
+        return self._user.name
 
     def on_message(self, message):
         message = loads(message)
-        self._user = user = message['user']
+        self._user = user = User(message['user'])
 
         if 'status' in message:
             status = message['status']
