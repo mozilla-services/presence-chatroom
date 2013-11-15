@@ -5,33 +5,42 @@ from boomchat.user import User
 @get('/')
 @view('index')
 def index():
-    app_session = request.environ.get('beaker.session')
-    if not app_session.get('logged_in', False):
-        contacts = []
-    else:
-        user = User(app_session['email'])
-        def _status(contact):
-            return {'user': contact, 'status': app.presence.get_status(contact)}
-
-        contacts = [_status(contact) for contact in user.contacts]
-
     return {'title': 'BoomChat',
             'session': request.environ.get('beaker.session'),
-            'users': app.chat.get_users(),
-            'contacts': contacts}
+            'contacts': _get_contacts()}
+
+
+def _get_contacts():
+    app_session = request.environ.get('beaker.session')
+    connected_users = app.chat.get_users()
+
+    if app_session.get('logged_in', False):
+        user = User(app_session['email'])
+
+        contacts = {}
+        for contact in user.contacts:
+            contacts[contact] = app.presence.get_status(contact)
+
+        users = [{'user': user.email, 'status': 'online'}]
+        for user, status in contacts.items():
+            if user in connected_users:
+                users.append({'user': user,
+                              'status': 'online'})
+            else:
+                users.append({'user': user,
+                              'status': contacts[user]})
+    else:
+        users = []
+        for user in connected_users:
+            users.append({'user': user, 'status': 'online'})
+
+    users.sort()
+    return users
 
 
 @route('/getContacts', method='GET')
 def get_contacts():
-    app_session = request.environ.get('beaker.session')
-    if not app_session.get('logged_in', False):
-        abort(401, "Sorry, access denied.")
-
-    def _status(contact):
-        return {'user': contact, 'status': app.presence.get_status(contact)}
-
-    user  = User(app_session['email'])
-    return {'contacts': [_status(contact) for contact in user.contacts]}
+    return {'contacts': _get_contacts()}
 
 
 @route('/addContact', method='GET')

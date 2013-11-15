@@ -33,4 +33,7 @@ class Chat(object):
                'message': message}
         evt = json.dumps(evt)
         for c in self.clients:
-            c.write_message(evt)
+            try:
+                c.write_message(evt)
+            except AttributeError:
+                pass   #meh
