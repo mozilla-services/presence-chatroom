@@ -5,6 +5,8 @@
   <title>{{title}}</title>
   <script src="/js/jquery-1.7.2.min.js"></script>
   <script src="/js/persona.js"></script>
+  <link rel="stylesheet" media="all" href="/css/boomchat.css"/>
+
 </head>
 <body>
   <div style="float:right">
@@ -27,18 +29,18 @@
   <h1 style="clear: both">Chat Room</h1>
   <table style="width: 100%">
    <tr>
-     <th style="width: 10%">Users</th>
-     <th style="width: 90%">Chat</th>
+     <th style="width: 20%">Users</th>
+     <th style="width: 80%">Chat</th>
    </tr>
    <tr>
-     <td style="width: 10%; vertical-align: top; margin-right: 5px">
+     <td style="width: 20%; vertical-align: top; margin-right: 5px">
        <ul id="contacts">
           %for contact in contacts:
-          <li id="contact-{{contact}}">{{contact['user']}} [{{contact['status']}}]</li>
+          <li id="contact-{{contact}}"><span id="status-{{contact}}" class="status status-{{contact['status']}}"></span> {{contact['user']}}</li>
           %end
        </ul>
      </td>
-     <td style="width: 90%; height: 200px; vertical-align: top">
+     <td style="width: 80%; height: 200px; vertical-align: top">
          <textarea readonly id="chat" style="width: 100%; height: 200px;">-- Welcome to the ChatRoom --</textarea>
      </td>
    </tr>

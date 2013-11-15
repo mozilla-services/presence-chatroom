@@ -16,13 +16,13 @@ class Chat(object):
                 self.clients.remove(exclient)
 
         evt = {'user': client.get_username(),
-               'status': 'online'}
+               'status': 'connected'}
         self.clients.append(client)
 
     def remove_client(self, client):
         user = client.get_username()
         evt = {'user': user,
-               'status': 'offline'}
+               'status': 'disconnected'}
 
         self.broadcast(client, evt)
         if client in self.clients:

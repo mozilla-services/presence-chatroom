@@ -59,9 +59,9 @@ class ChatHandler(tornado.websocket.WebSocketHandler):
         if 'status' in message:
             status = message['status']
 
-            if status == 'online':
+            if status == 'connected':
                 app.chat.add_client(self)
-            elif status == 'offline':
+            elif status == 'disconnected':
                 app.chat.remove_client(self)
 
         app.chat.broadcast(self, message)
@@ -93,6 +93,8 @@ class TornadoWebSocketServer(ServerAdapter):
 def main(port=8080, reloader=True):
     tornado_handlers = [
         (r"/chat", ChatHandler),
+        (r"/css/(.*)", tornado.web.StaticFileHandler,
+         {"path": os.path.join(STATIC, 'css')}),
         (r"/js/(.*)", tornado.web.StaticFileHandler,
          {"path": os.path.join(STATIC, 'js')}),
     ]

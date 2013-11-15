@@ -16,21 +16,20 @@ def _get_contacts():
 
     if app_session.get('logged_in', False):
         user = User(app_session['email'])
-        users = [{'user': user.email, 'status': 'online'}]
+        users = [{'user': user.email, 'status': 'connected'}]
 
         # grabbing the contact list
-        for user in user.contacts:
-            status = app.presence.get_status(contact)
-            if user in connected_users:
-                users.append({'user': user,
-                              'status': 'online'})
+        for contact in user.contacts:
+            if contact in connected_users:
+                users.append({'user': contact,
+                              'status': 'connected'})
             else:
-                users.append({'user': user,
+                users.append({'user': contact,
                               'status': app.presence.get_status(contact)})
     else:
         users = []
         for user in connected_users:
-            users.append({'user': user, 'status': 'online'})
+            users.append({'user': user, 'status': 'connected'})
 
     users.sort()
     return users

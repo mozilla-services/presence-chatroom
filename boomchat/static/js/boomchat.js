@@ -17,11 +17,16 @@ function loadContacts() {
 
      $.each(data.contacts, function(key, contact) {
        var user = contact.user;
+       console.log(user);
+
        var userid = user.replace('@', '_');
+
        userid = userid.replace('.', '_');
-       var status = '<span id="status-' + userid + '">' + contact.status + '</span>';
-       var contact_id = "contact-" + user;
-       var line = '<li id="' + contact_id + '">' + user + ' ['+ status +']</li>\n';
+console.log(userid);
+       var contact_id = "contact-" + userid;
+       var status = '<span id="status-' + userid + '" class="status status-' + contact.status + '"></span>';
+
+       var line = '<li id="' + contact_id + '"><div>' + status + ' ' + user + '</div></li>\n';
        ul += line;
        }
 
@@ -58,20 +63,19 @@ function appendLine(text) {
         if (data.presence) {
            var user = user.replace('@', '_');
            user = user.replace('.', '_');
-
            var status = data.status;
-           $("#status-" + user).text(status);
+           $("#status-" + user).html('<span class="status status-' + status + '"></span>');
         }
         else {
         var user = data.user;
         var message = data.message;
 
         if (message.status) {
-          if (message.status == 'online') {
+          if (message.status == 'connected') {
              appendLine('*** ' + user + ' has entered the room');
              $("#users").append('<li id="' + user + '">' + user + '</li>');
           }
-          if (message.status == 'offline') {
+          if (message.status == 'disconnected') {
              appendLine('*** ' + user + ' has left the room');
              $("#" + user).remove();
           }
@@ -116,7 +120,7 @@ navigator.id.watch({
         $('#user').text(res.email);
         currentUser = res.email;
         // connect to the chat
-        ws.send(JSON.stringify({'user': currentUser, 'status': 'online'}));
+        ws.send(JSON.stringify({'user': currentUser, 'status': 'connected'}));
 
         // refresh the contact list
         loadContacts();
