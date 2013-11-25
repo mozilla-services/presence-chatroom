@@ -3,6 +3,11 @@ from ws4py.client.tornadoclient import TornadoWebSocketClient
 import json
 
 
+DATA_DIR = '/tmp/boomchat/'
+if not os.path.exists(DATA_DIR):
+    os.mkdir(DATA_DIR)
+
+
 class PresenceClient(TornadoWebSocketClient):
 
     def __init__(self, url, token, onreceive, *args, **kw):
@@ -28,16 +33,40 @@ class PresenceClient(TornadoWebSocketClient):
 
 
 class Presence(object):
-    def __init__(self, service, appid, token):
+    def __init__(self):
+        self.prefs_file = os.path.join(DATA_DIR, 'prefs')
+
+        if not os.path.exists(self.prefs_file):
+            prefs = {'appid': '8592e6f9-a696-4892-95da-bb68b8b58f56',
+                     'service': 'ws://localhost:8282/myapps/',
+                     'token': 'ce3ee269-dd41-4039-964b-e5eb23e43927'}
+
+        else:
+            with open(self.prefs_file) as f:
+                prefs = json.loads(f.read())
+
+        self.appid = prefs['appid']
+        self.service = prefs['service']
+        self.token = prefs['token']
+        self.sync()
+
         self.statuses = {}
-        self.appid = appid
-        self.service = service
         self._subs = []
         self._ws = None
-        self.token = token
         self.initialize()
 
+    def sync(self):
+        prefs = {'appid': self.appid,
+                 'service': self.service,
+                 'token': self.token}
+
+        with open(self.prefs_file, 'w') as f:
+            f.write(json.dumps(prefs))
+
     def initialize(self):
+        if self._ws is not None and not self._ws.terminated:
+            self._ws.close()
+
         url = os.path.join(self.service, self.appid)
         self._ws = PresenceClient(url, token=self.token,
                                   onreceive=self.update_status)

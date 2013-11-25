@@ -2,7 +2,7 @@ from json import dumps, loads
 import os
 import browserid
 import beaker.middleware
-
+import json
 
 from bottle import ServerAdapter
 import bottle
@@ -99,10 +99,7 @@ def main(port=8080, reloader=True):
          {"path": os.path.join(STATIC, 'js')}),
     ]
 
-    appid = '8592e6f9-a696-4892-95da-bb68b8b58f56'
-    service = 'ws://localhost:8282/myapps/'
-    token = 'ce3ee269-dd41-4039-964b-e5eb23e43927'
-    app.presence = Presence(service, appid, token)
+    app.presence = Presence()
     app.chat = Chat()
     app.verifier = browserid.LocalVerifier(['*'])
 

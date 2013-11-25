@@ -39,6 +39,12 @@
     <label for="token">Presence Token</label>
     <input name="token" type="text" value="{{token}}" style="width: 100%"/>
    </div>
+   <br/>
+   <div>
+
+    <label for="service">Presence Service</label>
+    <input name="service" type="text" value="{{service}}" style="width: 100%"/>
+   </div>
 
    <br/><br/>
    <div class="submit">

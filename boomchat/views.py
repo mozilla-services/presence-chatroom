@@ -1,4 +1,4 @@
-from bottle import get, view, app, request, redirect, route, abort
+from bottle import get, view, app, request, redirect, route, abort, post
 from boomchat.user import User
 
 
@@ -29,7 +29,21 @@ def admin():
             'user': user,
             'appid': app.presence.appid,
             'token': app.presence.token,
+            'service': app.presence.service,
             'session': request.environ.get('beaker.session')}
+
+@post('/admin')
+def post_admin():
+    app_session = request.environ.get('beaker.session')
+    if not app_session.get('logged_in', False):
+        abort(401, "Sorry, access denied.")
+
+    app.presence.token = request.POST['token']
+    app.presence.appid = request.POST['appid']
+    app.presence.service = request.POST['service']
+    app.presence.sync()
+    app.presence.initialize()
+    redirect('/admin')
 
 
 @get('/granted')
