@@ -24,6 +24,21 @@
     </div>
 
     %end
+    <div id='presence' style="display: none">
+     %if user and user.get_presence_uid():
+       <a href="http://localhost:8282/revoke/{{appid}}?redirect=http://localhost:8080/granted">
+        Revoke Chat Room access to your presence
+      </a>
+
+     %else:
+      <a href="http://localhost:8282/grant/{{appid}}?redirect=http://localhost:8080/granted">
+        Authorize Chat Room to see your presence
+      </a>
+     %end
+    </div>
+
+  <div><a href="/admin">Admin</a></div>
+
   </div>
 
   <h1 style="clear: both">Chat Room</h1>

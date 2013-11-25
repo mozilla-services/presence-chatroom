@@ -117,6 +117,7 @@ navigator.id.watch({
       success: function(res, status, xhr) {
         $('#signin').hide();
         $('#signout').show();
+        $('#presence').show();
         $('#user').text(res.email);
         currentUser = res.email;
         // connect to the chat
@@ -141,6 +142,7 @@ navigator.id.watch({
         //window.location.reload();
         $('#signin').show();
         $('#signout').hide();
+        $('#presence').hide();
         $('#user').text('no one');
         currentUser = null;
 

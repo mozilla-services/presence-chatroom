@@ -5,9 +5,43 @@ from boomchat.user import User
 @get('/')
 @view('index')
 def index():
+    app_session = request.environ.get('beaker.session')
+    if not app_session.get('logged_in', False):
+        user = None
+    else:
+        user  = User(app_session['email'])
+
     return {'title': 'BoomChat',
+            'user': user,
+            'appid': app.presence.appid,
             'session': request.environ.get('beaker.session'),
             'contacts': _get_contacts()}
+
+@get('/admin')
+@view('admin')
+def admin():
+    app_session = request.environ.get('beaker.session')
+    if not app_session.get('logged_in', False):
+        abort(401, "Sorry, access denied.")
+
+    user  = User(app_session['email'])
+    return {'title': 'Chat Admin',
+            'user': user,
+            'appid': app.presence.appid,
+            'token': app.presence.token,
+            'session': request.environ.get('beaker.session')}
+
+
+@get('/granted')
+def granted():
+    app_session = request.environ.get('beaker.session')
+    if not app_session.get('logged_in', False):
+        abort(401, "Sorry, access denied.")
+
+    user  = User(app_session['email'])
+    uid = request.GET['Presence-UID']
+    user.set_presence_uid(uid)
+    redirect('/')
 
 
 def _get_contacts():

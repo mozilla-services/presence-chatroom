@@ -24,6 +24,13 @@ class User(object):
         with open(self._file, 'w') as f:
             f.write(json.dumps(self._data))
 
+    def set_presence_uid(self, uid):
+        self._data['uid'] = uid
+        self._sync()
+
+    def get_presence_uid(self):
+        return self._data.get('uid')
+
     @property
     def name(self):
         return self.email
