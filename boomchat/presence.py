@@ -85,7 +85,8 @@ class Presence(object):
     # triggered by the presence service via websockets
     def update_status(self, data):
         status = data.get('status')
-        user = data.get('user')
+        user = data.get('uid')
+        data['user'] = user    # XXX will need conversion
         if user is not None and status is not None:
             for sub in self._subs:
                 sub(data)
