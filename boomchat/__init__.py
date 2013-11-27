@@ -97,6 +97,9 @@ def main(port=8080, reloader=True):
          {"path": os.path.join(STATIC, 'css')}),
         (r"/js/(.*)", tornado.web.StaticFileHandler,
          {"path": os.path.join(STATIC, 'js')}),
+        (r"/images/(.*)", tornado.web.StaticFileHandler,
+         {"path": os.path.join(STATIC, 'images')}),
+
     ]
 
     app.presence = Presence()

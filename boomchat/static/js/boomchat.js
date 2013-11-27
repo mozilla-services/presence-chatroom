@@ -26,7 +26,10 @@ console.log(userid);
        var contact_id = "contact-" + userid;
        var status = '<span id="status-' + userid + '" class="status status-' + contact.status + '"></span>';
 
-       var line = '<li id="' + contact_id + '"><div>' + status + ' ' + user + '</div></li>\n';
+       var line = '<li id="' + contact_id + '">';
+       line += '<img src="/images/Bell-32.png" onclick="notify(this)" id="notify-' + userid + '" class="notify"></img>';
+       line += status + ' ' + user;
+       line += '</li>\n';
        ul += line;
        }
 
@@ -86,6 +89,12 @@ function appendLine(text) {
         }
         }
       };
+
+
+function notify(user) {
+  alert(user.id);
+}
+
 
 var send = document.getElementById('send');
 

@@ -51,7 +51,10 @@
      <td style="width: 20%; vertical-align: top; margin-right: 5px">
        <ul id="contacts">
           %for contact in contacts:
-          <li id="contact-{{contact}}"><span id="status-{{contact}}" class="status status-{{contact['status']}}"></span> {{contact['user']}}</li>
+          <li id="contact-{{contact}}">
+            <img onclick="notify(this)" src="/images/Bell-32.png" id="notify-{{contact}}" class="notify"></img>
+            <span id="status-{{contact}}" class="status status-{{contact['status']}}"></span> {{contact['user']}}
+          </li>
           %end
        </ul>
      </td>
