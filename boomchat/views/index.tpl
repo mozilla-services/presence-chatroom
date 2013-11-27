@@ -41,14 +41,15 @@
 
   </div>
 
-  <h1 style="clear: both">Chat Room</h1>
-  <table style="width: 100%">
+  <h1 style="float:left">Chat Room</h1>
+
+  <table class="chat">
    <tr>
-     <th style="width: 20%">Users</th>
-     <th style="width: 80%">Chat</th>
+     <th class="users">Users</th>
+     <th class="chat">Chat</th>
    </tr>
    <tr>
-     <td style="width: 20%; vertical-align: top; margin-right: 5px">
+     <td class="users">
        <ul id="contacts">
           %for contact in contacts:
           <li id="contact-{{contact}}">
@@ -58,8 +59,8 @@
           %end
        </ul>
      </td>
-     <td style="width: 80%; height: 200px; vertical-align: top">
-         <textarea readonly id="chat" style="width: 100%; height: 200px;">-- Welcome to the ChatRoom --</textarea>
+     <td class="chat">
+         <textarea readonly id="chat">-- Welcome to the ChatRoom --</textarea>
      </td>
    </tr>
    <tr>
@@ -71,7 +72,9 @@
     </td>
    </tr>
   </table>
-  <div>
+
+
+  <div class="addContact">
       Add a contact: <input type="text" name="contact" id="contact"></input>
       <button id="add" onclick="addContact()">Add</button>
   </div>
