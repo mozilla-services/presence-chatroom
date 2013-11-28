@@ -91,3 +91,10 @@ class Presence(object):
             for sub in self._subs:
                 sub(data)
             self.statuses[user] = status
+
+    def notify(self, source, target, message):
+        self._ws.send(json.dumps({'token': self.token,
+                                  'action': 'notify',
+                                  'source': source,
+                                  'target': target,
+                                  'message': message}))

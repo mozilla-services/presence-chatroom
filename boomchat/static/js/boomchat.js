@@ -17,17 +17,14 @@ function loadContacts() {
 
      $.each(data.contacts, function(key, contact) {
        var user = contact.user;
-       console.log(user);
 
        var userid = user.replace('@', '_');
-
        userid = userid.replace('.', '_');
-console.log(userid);
        var contact_id = "contact-" + userid;
        var status = '<span id="status-' + userid + '" class="status status-' + contact.status + '"></span>';
 
        var line = '<li id="' + contact_id + '">';
-       line += '<img src="/images/Bell-32.png" onclick="notify(this)" id="notify-' + userid + '" class="notify"></img>';
+       line += '<img src="/images/Bell-32.png" onclick="notify(\'' + user + '\')" id="notify-' + userid + '" class="notify"></img>';
        line += status + ' ' + user;
        line += '</li>\n';
        ul += line;
@@ -92,7 +89,12 @@ function appendLine(text) {
 
 
 function notify(user) {
-  alert(user.id);
+  ws.send(JSON.stringify({'user': currentUser,
+                          'action': 'notification',
+                          'target': user,
+                          'message': currentUser + ' wants to talk with you'
+  }));
+
 }
 
 
@@ -101,7 +103,8 @@ var send = document.getElementById('send');
 send.onclick = function() {
    if (currentUser) {
      var msg = $('#msg').val();
-     ws.send(JSON.stringify({'user': currentUser, 'message': msg}));
+     ws.send(JSON.stringify({'user': currentUser, 'action': 'chat',
+                             'message': msg}));
      $('#msg').val("");
    }
    else {

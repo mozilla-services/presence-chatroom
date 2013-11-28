@@ -55,6 +55,7 @@ class ChatHandler(tornado.websocket.WebSocketHandler):
     def on_message(self, message):
         message = loads(message)
         self._user = user = User(message['user'])
+        action = message.get('action')
 
         if 'status' in message:
             status = message['status']
@@ -64,7 +65,14 @@ class ChatHandler(tornado.websocket.WebSocketHandler):
             elif status == 'disconnected':
                 app.chat.remove_client(self)
 
-        app.chat.broadcast(self, message)
+        if action == 'chat':
+            app.chat.broadcast(self, message)
+        elif action == 'notification':
+            # we're sending to the presence server the live
+            # notification
+            app.presence.notify(user.email,
+                                message['target'],
+                                message['message'])
 
     def on_close(self):
         app.chat.remove_client(self)
