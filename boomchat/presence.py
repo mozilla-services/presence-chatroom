@@ -21,6 +21,8 @@ class PresenceClient(TornadoWebSocketClient):
 
     def received_message(self, msg):
         data = json.loads(msg.data)
+        print 'recieved from presence: %s' % str(data)
+
         if data.get('action') == 'auth':
             # that's the auth ACK
             if data['result'] != 'OK':
@@ -85,8 +87,12 @@ class Presence(object):
     # triggered by the presence service via websockets
     def update_status(self, data):
         status = data.get('status')
+
+        # XXX needs to convert uid to user here
         user = data.get('uid')
-        data['user'] = user    # XXX will need conversion
+        data['user'] = user
+
+
         if user is not None and status is not None:
             for sub in self._subs:
                 sub(data)

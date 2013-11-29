@@ -53,7 +53,9 @@
        <ul id="contacts">
           %for contact in contacts:
           <li id="contact-{{contact}}">
+           %if contact['status'] == 'online':
             <img onclick="notify(this)" src="/images/Bell-32.png" id="notify-{{contact}}" class="notify"></img>
+            %end
             <span id="status-{{contact}}" class="status status-{{contact['status']}}"></span> {{contact['user']}}
           </li>
           %end

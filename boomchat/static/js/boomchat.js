@@ -24,7 +24,11 @@ function loadContacts() {
        var status = '<span id="status-' + userid + '" class="status status-' + contact.status + '"></span>';
 
        var line = '<li id="' + contact_id + '">';
-       line += '<img src="/images/Bell-32.png" onclick="notify(\'' + user + '\')" id="notify-' + userid + '" class="notify"></img>';
+
+       // if the contact is online, we display a bell
+       if (contact.status == 'online') {
+           line += '<img src="/images/Bell-32.png" onclick="notify(\'' + user + '\')" id="notify-' + userid + '" class="notify"></img>';
+       }
        line += status + ' ' + user;
        line += '</li>\n';
        ul += line;
@@ -59,12 +63,10 @@ function appendLine(text) {
     ws.onmessage = function(evt) {
         var data = jQuery.parseJSON(evt.data);
         var user = data.user;
+        console.log(data);
 
         if (data.presence) {
-           var user = user.replace('@', '_');
-           user = user.replace('.', '_');
-           var status = data.status;
-           $("#status-" + user).html('<span class="status status-' + status + '"></span>');
+           loadContacts();
         }
         else {
         var user = data.user;
@@ -79,6 +81,7 @@ function appendLine(text) {
              appendLine('*** ' + user + ' has left the room');
              $("#" + user).remove();
           }
+          loadContacts();
         }
         else {
           var msg = user + ': ' + message.message;
@@ -89,10 +92,12 @@ function appendLine(text) {
 
 
 function notify(user) {
-  ws.send(JSON.stringify({'user': currentUser,
+  var current = currentUser;
+
+  ws.send(JSON.stringify({'user': current,
                           'action': 'notification',
                           'target': user,
-                          'message': currentUser + ' wants to talk with you'
+                          'message': current + ' wants to talk with you'
   }));
 
 }
@@ -132,6 +137,7 @@ navigator.id.watch({
         $('#presence').show();
         $('#user').text(res.email);
         currentUser = res.email;
+
         // connect to the chat
         ws.send(JSON.stringify({'user': currentUser, 'status': 'connected'}));
 
@@ -151,6 +157,7 @@ navigator.id.watch({
       success: function(res, status, xhr) {
         // disconnect from the chat
         ws.send(JSON.stringify({'user': currentUser, 'status': 'offline'}));
+
         //window.location.reload();
         $('#signin').show();
         $('#signout').hide();
